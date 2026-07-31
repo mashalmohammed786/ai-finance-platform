@@ -20,28 +20,28 @@ export default async function AccountPage({ params }) {
     <div className="space-y-8 max-w-7xl mx-auto px-4 pt-28 pb-16">
       <Link
         href="/dashboard"
-        className="inline-flex items-center text-sm font-semibold text-blue-600 hover:underline"
+        className="inline-flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
       >
         <ArrowLeft className="mr-1 h-4 w-4" /> Back to Dashboard
       </Link>
 
       {/* Account Info Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
-            <CreditCard className="h-8 w-8 text-blue-600" />
+          <h1 className="text-3xl font-extrabold text-foreground flex items-center gap-3">
+            <CreditCard className="h-8 w-8 text-blue-600 dark:text-blue-400" />
             {account.name}
           </h1>
-          <p className="text-sm text-slate-500 capitalize">
+          <p className="text-sm text-muted-foreground capitalize">
             {account.type.toLowerCase()} Account
           </p>
         </div>
 
         <div className="text-left md:text-right">
-          <span className="text-xs uppercase text-slate-400 font-bold tracking-wider">
+          <span className="text-xs uppercase text-muted-foreground font-bold tracking-wider">
             Current Balance
           </span>
-          <p className="text-3xl font-extrabold text-slate-900">
+          <p className="text-3xl font-extrabold text-foreground">
             ${account.balance.toFixed(2)}
           </p>
         </div>

@@ -24,7 +24,7 @@ import {
 } from "./ui/select";
 import useFetch from "@/hooks/use-fetch";
 import { createAccount } from "@/actions/dashboard";
-import { Loader2 } from "lucide-react";
+import { Loader2, Landmark, DollarSign, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 const accountSchema = z.object({
@@ -67,7 +67,10 @@ export default function CreateAccountDrawer({ children }) {
       reset();
       setOpen(false);
     }
-  }, [newAccount, createAccountLoading]);
+    if (error) {
+      toast.error(error.message || "Failed to create account");
+    }
+  }, [newAccount, createAccountLoading, error]);
 
   const onSubmit = async (data) => {
     await createAccountFn(data);
@@ -76,58 +79,83 @@ export default function CreateAccountDrawer({ children }) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Create New Bank Account</DrawerTitle>
+      <DrawerContent className="bg-slate-950 border-slate-800 text-slate-100 max-w-lg mx-auto">
+        <DrawerHeader className="border-b border-slate-800/80 pb-4">
+          <DrawerTitle className="text-xl font-bold flex items-center gap-2 text-white">
+            <div className="p-2 rounded-lg bg-blue-600/10 border border-blue-500/20 text-blue-400">
+              <Landmark className="h-5 w-5" />
+            </div>
+            Create New Bank Account
+          </DrawerTitle>
         </DrawerHeader>
 
-        <div className="px-4 pb-4">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Account Name */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Account Name</label>
-              <Input
-                placeholder="e.g. Main Checking, Savings"
-                {...register("name")}
-              />
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Account Name
+              </label>
+              <div className="relative">
+                <Wallet className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
+                <Input
+                  placeholder="e.g. Main Checking, Savings"
+                  {...register("name")}
+                  className="pl-9 bg-slate-900 border-slate-800 text-slate-100 placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl"
+                />
+              </div>
               {errors.name && (
-                <p className="text-xs text-red-500">{errors.name.message}</p>
+                <p className="text-xs text-rose-400 mt-1">{errors.name.message}</p>
               )}
             </div>
 
+            {/* Account Type */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Account Type</label>
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Account Type
+              </label>
               <Select
                 onValueChange={(val) => setValue("type", val)}
                 defaultValue={watch("type")}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-slate-900 border-slate-800 text-slate-100 rounded-xl focus:ring-blue-500/20">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-900 border-slate-800 text-slate-100">
                   <SelectItem value="CURRENT">Current Account</SelectItem>
                   <SelectItem value="SAVINGS">Savings Account</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Initial Balance */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Initial Balance</label>
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                {...register("balance")}
-              />
+              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Initial Balance
+              </label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  {...register("balance")}
+                  className="pl-9 bg-slate-900 border-slate-800 text-slate-100 placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl"
+                />
+              </div>
               {errors.balance && (
-                <p className="text-xs text-red-500">{errors.balance.message}</p>
+                <p className="text-xs text-rose-400 mt-1">{errors.balance.message}</p>
               )}
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border p-3">
+            {/* Default Switch */}
+            <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-4">
               <div className="space-y-0.5">
-                <label className="text-sm font-medium">Set as Default</label>
-                <p className="text-xs text-muted-foreground">
-                  This account will be selected by default for new transactions
+                <label className="text-sm font-semibold text-slate-200">
+                  Set as Default Account
+                </label>
+                <p className="text-xs text-slate-400">
+                  Selected automatically for new transactions
                 </p>
               </div>
               <Switch
@@ -136,16 +164,21 @@ export default function CreateAccountDrawer({ children }) {
               />
             </div>
 
-            <div className="flex gap-4 pt-4">
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
               <DrawerClose asChild>
-                <Button type="button" variant="outline" className="flex-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white rounded-xl"
+                >
                   Cancel
                 </Button>
               </DrawerClose>
 
               <Button
                 type="submit"
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-600/20"
                 disabled={createAccountLoading}
               >
                 {createAccountLoading ? (

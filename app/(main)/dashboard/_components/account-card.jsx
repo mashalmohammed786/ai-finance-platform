@@ -45,11 +45,11 @@ export function AccountCard({ account }) {
   }, [error]);
 
   return (
-    <Card className="hover:shadow-md transition-shadow bg-white border-slate-200 relative overflow-hidden group">
+    <Card className="bg-card hover:bg-accent/50 border-border hover:border-blue-500/40 shadow-xl rounded-2xl transition-all duration-300 relative overflow-hidden group">
       <Link href={`/account/${id}`}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-blue-600" />
+          <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <CreditCard className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             {name}
           </CardTitle>
           <div
@@ -59,20 +59,25 @@ export function AccountCard({ account }) {
               e.stopPropagation();
             }}
           >
-            <span className="text-xs text-slate-500 font-medium">Default</span>
+            <span className="text-xs text-muted-foreground font-medium">Default</span>
             <Switch
               checked={isDefault}
               onCheckedChange={handleDefaultChange}
               disabled={updateDefaultLoading}
+              className="data-[state=checked]:bg-blue-600"
             />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-extrabold text-slate-900">
+          <div className="text-2xl font-black text-foreground">
             ${Number(balance || 0).toFixed(2)}
           </div>
-          <p className="text-xs text-slate-400 capitalize mt-1">
-            {type?.toLowerCase()} Account • {account._count?.transactions || 0} Transactions
+          <p className="text-xs text-muted-foreground capitalize mt-2 flex items-center gap-1.5">
+            <span className="px-2 py-0.5 rounded-md bg-muted border border-border text-muted-foreground font-medium">
+              {type?.toLowerCase()} account
+            </span>
+            <span>•</span>
+            <span>{account._count?.transactions || 0} Transactions</span>
           </p>
         </CardContent>
       </Link>

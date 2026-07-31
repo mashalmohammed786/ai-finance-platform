@@ -1,3 +1,6 @@
+import React from "react";
+import { BarChart, Receipt, PieChart, Wallet } from "lucide-react";
+
 export const statsData = [
   {
     value: "50K+",
@@ -19,28 +22,28 @@ export const statsData = [
 
 export const featuresData = [
   {
-    icon: "BarChart3",
+    icon: <BarChart className="h-6 w-6" />,
     title: "Advanced Analytics",
     description:
       "Get deep insights into your spending patterns with AI-powered analytics and customizable reports.",
   },
   {
-    icon: "Receipt",
+    icon: <Receipt className="h-6 w-6" />,
     title: "Smart Receipt Scanner",
     description:
-      "Extract data automatically from receipts using Google Gemini AI technology.",
+      "Extract transaction details automatically from receipts using Google Gemini AI technology.",
   },
   {
-    icon: "PieChart",
+    icon: <PieChart className="h-6 w-6" />,
     title: "Budget Planning",
     description:
       "Set intelligent budgets and receive automated alerts when approaching limits.",
   },
   {
-    icon: "CreditCard",
+    icon: <Wallet className="h-6 w-6" />,
     title: "Multi-Account Support",
     description:
-      "Manage multiple bank accounts and credit cards seamlessly in one place.",
+      "Manage multiple accounts and track expenses manually or via AI receipt scanning in one place.",
   },
 ];
 
@@ -52,10 +55,10 @@ export const howItWorksData = [
       "Sign up in seconds with Clerk and secure your financial data instantly.",
   },
   {
-    icon: "CreditCard",
-    title: "2. Connect Accounts",
+    icon: "Wallet",
+    title: "2. Track Expenses",
     description:
-      "Link your bank accounts or add transactions manually with AI receipt scanning.",
+      "Set up your financial accounts and log transactions manually or instantly using AI receipt scanning.",
   },
   {
     icon: "Zap",

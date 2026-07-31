@@ -33,27 +33,53 @@ export function AccountChart({ transactions = [] }) {
   });
 
   return (
-    <Card className="bg-white border-slate-200">
+    <Card className="bg-card text-card-foreground border-border">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Account Activity</CardTitle>
+        <CardTitle className="text-lg font-bold text-foreground">
+          Account Activity
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[250px] w-full">
           {chartData.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-slate-400 text-sm">
+            <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
               No chart data available
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip formatter={(value) => `$${Number(value).toFixed(2)}`} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="hsl(var(--border))"
+                />
+                <XAxis
+                  dataKey="date"
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  formatter={(value) => [`$${Number(value).toFixed(2)}`, "Balance"]}
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--popover))",
+                    borderColor: "hsl(var(--border))",
+                    color: "hsl(var(--popover-foreground))",
+                    borderRadius: "8px",
+                  }}
+                  itemStyle={{ color: "hsl(var(--popover-foreground))" }}
+                />
                 <Area
                   type="monotone"
                   dataKey="balance"
-                  stroke="#2563eb"
+                  stroke="#3b82f6"
                   fill="#3b82f6"
                   fillOpacity={0.2}
                 />

@@ -139,28 +139,32 @@ export default function AddTransactionPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 pt-28 pb-16 space-y-6">
-      <Link href="/dashboard" className="inline-flex items-center text-sm font-semibold text-blue-600 hover:underline">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline transition-colors"
+      >
         <ArrowLeft className="mr-1 h-4 w-4" /> Back to Dashboard
       </Link>
 
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-extrabold text-slate-900">Add Transaction</h1>
+        <h1 className="text-3xl font-black text-foreground tracking-tight">Add Transaction</h1>
       </div>
 
       {/* AI Receipt Scanner Card */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 shadow-sm">
-        <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h3 className="font-bold text-slate-900 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-blue-600" />
+      <Card className="bg-card text-card-foreground border-border shadow-xl rounded-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+          <div className="space-y-1 text-center md:text-left">
+            <h3 className="font-bold text-foreground flex items-center justify-center md:justify-start gap-2 text-base">
+              <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               Automated AI Receipt Scanner
             </h3>
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-muted-foreground">
               Upload a receipt photo to automatically extract amount, date, and description.
             </p>
           </div>
 
-          <label className="cursor-pointer inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md transition">
+          <label className="cursor-pointer inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all shrink-0">
             {scanning ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -184,15 +188,18 @@ export default function AddTransactionPage() {
       </Card>
 
       {/* Form Card */}
-      <Card className="bg-white border-slate-200 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-slate-900">Transaction Details</CardTitle>
+      <Card className="bg-card text-card-foreground border-border shadow-xl rounded-2xl">
+        <CardHeader className="border-b border-border pb-4">
+          <CardTitle className="text-xl font-bold text-foreground">Transaction Details</CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Type */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Type</label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Type
+                </label>
                 <Select
                   onValueChange={(val) => {
                     setValue("type", val);
@@ -200,41 +207,48 @@ export default function AddTransactionPage() {
                   }}
                   value={watch("type")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary rounded-xl h-11">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover border-border text-popover-foreground">
                     <SelectItem value="EXPENSE">Expense</SelectItem>
                     <SelectItem value="INCOME">Income</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
+              {/* Amount */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Amount ($)</label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Amount ($)
+                </label>
                 <Input
                   type="number"
                   step="0.01"
                   placeholder="0.00"
                   {...register("amount")}
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 rounded-xl h-11"
                 />
                 {errors.amount && (
-                  <p className="text-xs text-red-500">{errors.amount.message}</p>
+                  <p className="text-xs text-destructive font-medium">{errors.amount.message}</p>
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Bank Account */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Bank Account</label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Bank Account
+                </label>
                 <Select
                   onValueChange={(val) => setValue("accountId", val)}
                   value={watch("accountId")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary rounded-xl h-11">
                     <SelectValue placeholder="Select account" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover border-border text-popover-foreground">
                     {accounts.map((acc) => (
                       <SelectItem key={acc.id} value={acc.id}>
                         {acc.name} (${Number(acc.balance).toFixed(2)})
@@ -243,20 +257,23 @@ export default function AddTransactionPage() {
                   </SelectContent>
                 </Select>
                 {errors.accountId && (
-                  <p className="text-xs text-red-500">{errors.accountId.message}</p>
+                  <p className="text-xs text-destructive font-medium">{errors.accountId.message}</p>
                 )}
               </div>
 
+              {/* Category */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Category</label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Category
+                </label>
                 <Select
                   onValueChange={(val) => setValue("category", val)}
                   value={watch("category")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary rounded-xl h-11">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover border-border text-popover-foreground">
                     {filteredCategories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.name}>
                         {cat.name}
@@ -265,26 +282,43 @@ export default function AddTransactionPage() {
                   </SelectContent>
                 </Select>
                 {errors.category && (
-                  <p className="text-xs text-red-500">{errors.category.message}</p>
+                  <p className="text-xs text-destructive font-medium">{errors.category.message}</p>
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Date */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Date</label>
-                <Input type="date" {...register("date")} />
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Date
+                </label>
+                <Input
+                  type="date"
+                  {...register("date")}
+                  className="bg-background border-border text-foreground focus:border-primary focus:ring-primary/20 rounded-xl h-11 dark:[color-scheme:dark]"
+                />
               </div>
 
+              {/* Description */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Description</label>
-                <Input placeholder="e.g. Grocery store, Salary" {...register("description")} />
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Description
+                </label>
+                <Input
+                  placeholder="e.g. Grocery store, Salary"
+                  {...register("description")}
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 rounded-xl h-11"
+                />
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border p-4">
+            {/* Recurring Toggle Panel */}
+            <div className="flex items-center justify-between rounded-xl bg-background border border-border p-4">
               <div className="space-y-0.5">
-                <label className="text-sm font-medium">Recurring Transaction</label>
+                <label className="text-sm font-semibold text-foreground">
+                  Recurring Transaction
+                </label>
                 <p className="text-xs text-muted-foreground">
                   Automatically repeat this transaction on a schedule
                 </p>
@@ -292,20 +326,24 @@ export default function AddTransactionPage() {
               <Switch
                 checked={isRecurring}
                 onCheckedChange={(val) => setValue("isRecurring", val)}
+                className="data-[state=checked]:bg-blue-600"
               />
             </div>
 
+            {/* Recurring Interval Select */}
             {isRecurring && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Recurring Interval</label>
+              <div className="space-y-2 pt-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Recurring Interval
+                </label>
                 <Select
                   onValueChange={(val) => setValue("recurringInterval", val)}
                   value={watch("recurringInterval")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary rounded-xl h-11">
                     <SelectValue placeholder="Select interval" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover border-border text-popover-foreground">
                     <SelectItem value="DAILY">Daily</SelectItem>
                     <SelectItem value="WEEKLY">Weekly</SelectItem>
                     <SelectItem value="MONTHLY">Monthly</SelectItem>
@@ -315,9 +353,10 @@ export default function AddTransactionPage() {
               </div>
             )}
 
+            {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 font-bold py-6 text-base shadow-lg shadow-blue-500/20 mt-4"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold h-12 rounded-xl shadow-lg shadow-blue-600/20 transition-all text-base mt-4"
               disabled={transactionLoading}
             >
               {transactionLoading ? (

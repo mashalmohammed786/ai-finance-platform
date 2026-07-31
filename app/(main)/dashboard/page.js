@@ -8,6 +8,8 @@ import { AccountCard } from "./_components/account-card";
 import { BudgetProgress } from "./_components/budget-progress";
 import { DashboardOverview } from "./_components/transaction-overview";
 
+export const dynamic = "force-dynamic"; // <--- Add this line here
+
 export default async function DashboardPage() {
   // Fetch user accounts and dashboard transactions in parallel
   const [accounts, transactions] = await Promise.all([

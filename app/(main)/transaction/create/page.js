@@ -24,6 +24,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+export const dynamic = "force-dynamic"; // <--- Add this line to prevent static generation errors
+
 const transactionSchema = z.object({
   type: z.enum(["INCOME", "EXPENSE"]),
   amount: z.string().min(1, "Amount is required"),

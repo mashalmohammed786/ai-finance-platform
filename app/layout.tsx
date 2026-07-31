@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import "./globals.css";
 
+export const dynamic = "force-dynamic"; // <--- Add this line to prevent static prerendering errors
+
 export const metadata = {
   title: "Wealth AI - Smart Financial Management",
   description: "AI-powered financial platform to track, analyze, and optimize spending.",

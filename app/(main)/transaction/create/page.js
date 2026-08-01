@@ -42,7 +42,6 @@ export default function AddTransactionPage() {
   const [accounts, setAccounts] = useState([]);
   const [scanning, setScanning] = useState(false);
 
-  // Helper to format values in Indian Rupees (INR)
   const formatINR = (val) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -55,7 +54,6 @@ export default function AddTransactionPage() {
     handleSubmit,
     setValue,
     watch,
-    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(transactionSchema),
@@ -160,7 +158,6 @@ export default function AddTransactionPage() {
         <h1 className="text-3xl font-black text-foreground tracking-tight">Add Transaction</h1>
       </div>
 
-      {/* AI Receipt Scanner Card with Camera & Gallery Options */}
       <Card className="bg-card text-card-foreground border-border shadow-xl rounded-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
@@ -175,7 +172,6 @@ export default function AddTransactionPage() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0 flex-wrap justify-center">
-            {/* 1. Camera Capture Button */}
             <label className="cursor-pointer inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all">
               {scanning ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -186,14 +182,13 @@ export default function AddTransactionPage() {
               <input
                 type="file"
                 accept="image/*"
-                capture="environment" // Forces rear camera on mobile devices
+                capture="environment"
                 className="hidden"
                 onChange={handleReceiptScan}
                 disabled={scanning}
               />
             </label>
 
-            {/* 2. Gallery / File Upload Button */}
             <label className="cursor-pointer inline-flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-sm font-semibold px-4 py-2.5 rounded-xl border border-border transition-all">
               {scanning ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -213,7 +208,6 @@ export default function AddTransactionPage() {
         </CardContent>
       </Card>
 
-      {/* Form Card */}
       <Card className="bg-card text-card-foreground border-border shadow-xl rounded-2xl">
         <CardHeader className="border-b border-border pb-4">
           <CardTitle className="text-xl font-bold text-foreground">Transaction Details</CardTitle>
@@ -221,7 +215,6 @@ export default function AddTransactionPage() {
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Type */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Type
@@ -243,7 +236,6 @@ export default function AddTransactionPage() {
                 </Select>
               </div>
 
-              {/* Amount */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Amount (₹)
@@ -262,7 +254,6 @@ export default function AddTransactionPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Bank Account */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Bank Account
@@ -287,7 +278,6 @@ export default function AddTransactionPage() {
                 )}
               </div>
 
-              {/* Category */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Category
@@ -314,7 +304,6 @@ export default function AddTransactionPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Date */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Date
@@ -322,11 +311,10 @@ export default function AddTransactionPage() {
                 <Input
                   type="date"
                   {...register("date")}
-                  className="bg-background border-border text-foreground focus:border-primary focus:ring-primary/20 rounded-xl h-11 [color-scheme:light] dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-datetime-edit]:text-foreground"
+                  className="bg-background border border-border text-foreground text-base h-11 rounded-xl px-3 [color-scheme:light] dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-datetime-edit]:text-foreground [&::-webkit-datetime-edit-fields-wrapper]:text-foreground"
                 />
               </div>
 
-              {/* Description */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Description
@@ -339,7 +327,6 @@ export default function AddTransactionPage() {
               </div>
             </div>
 
-            {/* Recurring Toggle Panel */}
             <div className="flex items-center justify-between rounded-xl bg-background border border-border p-4">
               <div className="space-y-0.5">
                 <label className="text-sm font-semibold text-foreground">
@@ -356,7 +343,6 @@ export default function AddTransactionPage() {
               />
             </div>
 
-            {/* Recurring Interval Select */}
             {isRecurring && (
               <div className="space-y-2 pt-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -379,7 +365,6 @@ export default function AddTransactionPage() {
               </div>
             )}
 
-            {/* Submit Button */}
             <Button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold h-12 rounded-xl shadow-lg shadow-blue-600/20 transition-all text-base mt-4"

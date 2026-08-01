@@ -51,27 +51,14 @@ export function TransactionTable({
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [recurringFilter, setRecurringFilter] = useState("ALL");
   const [scopeFilter, setScopeFilter] = useState("ALL");
-  const [dateFilter, setDateFilter] = useState(""); // YYYY-MM-DD
+  const [dateFilter, setDateFilter] = useState(""); 
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "date", direction: "desc" });
-
-  // Track which specific ID is currently being deleted via useFetch
   const [deletingId, setDeletingId] = useState(null);
 
-  // Hook for single deletion
-  const {
-    loading: deleteLoading,
-    fn: deleteFn,
-    error: deleteError,
-  } = useFetch(onDeleteTransaction);
+  const { loading: deleteLoading, fn: deleteFn } = useFetch(onDeleteTransaction);
+  const { loading: bulkDeleteLoading, fn: bulkDeleteFn } = useFetch(onDeleteSelected);
 
-  // Hook for bulk deletion
-  const {
-    loading: bulkDeleteLoading,
-    fn: bulkDeleteFn,
-  } = useFetch(onDeleteSelected);
-
-  // Helper to format values in Indian Rupees (INR)
   const formatINR = (val) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -79,7 +66,6 @@ export function TransactionTable({
       maximumFractionDigits: 2,
     }).format(val || 0);
 
-  // Handle Sort Toggle
   const handleSort = (key) => {
     setSortConfig((prev) => ({
       key,
@@ -87,7 +73,6 @@ export function TransactionTable({
     }));
   };
 
-  // Filter & Sort Logic
   const filteredAndSortedTransactions = useMemo(() => {
     return transactions
       .filter((t) => {
@@ -208,7 +193,6 @@ export function TransactionTable({
 
   return (
     <div className="space-y-4">
-      {/* Search and Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
         <div className="flex flex-wrap items-center gap-2 flex-1">
           <div className="relative flex-1 min-w-[200px]">
@@ -227,7 +211,7 @@ export function TransactionTable({
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="h-10 py-2 px-3 pr-8 text-sm border border-border bg-background text-foreground placeholder:text-muted-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:light] dark:[color-scheme:dark]"
+              className="h-10 py-2 px-3 pr-8 text-sm border border-border bg-background text-foreground placeholder:text-muted-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:light] dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-datetime-edit]:text-foreground [&::-webkit-datetime-edit-fields-wrapper]:text-foreground"
             />
             {dateFilter && (
               <button
@@ -290,7 +274,6 @@ export function TransactionTable({
         </div>
       </div>
 
-      {/* Table Container */}
       <div className="border border-border rounded-md overflow-hidden bg-card text-card-foreground shadow-sm">
         <Table>
           <TableHeader>

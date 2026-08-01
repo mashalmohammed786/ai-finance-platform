@@ -211,12 +211,13 @@ export function TransactionTable({
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="h-10 py-2 px-3 pr-8 text-sm border border-border bg-background text-foreground placeholder:text-muted-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:light] dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-datetime-edit]:text-foreground [&::-webkit-datetime-edit-fields-wrapper]:text-foreground"
+              style={{ colorScheme: "light dark" }}
+              className="h-10 py-2 px-3 pr-8 text-sm border border-border bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary w-full [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-0 dark:[&::-webkit-calendar-picker-indicator]:invert"
             />
             {dateFilter && (
               <button
                 onClick={() => setDateFilter("")}
-                className="absolute right-2.5 p-1 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 p-1 text-muted-foreground hover:text-foreground z-10"
                 title="Clear date filter"
               >
                 <X className="h-3.5 w-3.5" />

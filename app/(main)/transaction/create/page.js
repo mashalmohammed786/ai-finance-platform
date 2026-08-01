@@ -308,11 +308,14 @@ export default function AddTransactionPage() {
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Date
                 </label>
-                <Input
-                  type="date"
-                  {...register("date")}
-                  className="bg-background border border-border text-foreground text-base h-11 rounded-xl px-3 [color-scheme:light] dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-datetime-edit]:text-foreground [&::-webkit-datetime-edit-fields-wrapper]:text-foreground"
-                />
+                <div className="relative">
+                  <Input
+                    type="date"
+                    {...register("date")}
+                    style={{ colorScheme: "light dark" }}
+                    className="bg-background border border-border text-foreground text-base h-11 rounded-xl px-3 w-full opacity-100 relative z-10 [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-0 dark:[&::-webkit-calendar-picker-indicator]:invert"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">

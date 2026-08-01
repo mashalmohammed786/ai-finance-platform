@@ -227,7 +227,7 @@ export function TransactionTable({
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="h-10 py-2 px-3 text-sm border border-border bg-background text-foreground placeholder:text-muted-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:light] dark:[color-scheme:dark]"
+              className="h-10 py-2 px-3 pr-8 text-sm border border-border bg-background text-foreground placeholder:text-muted-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:light] dark:[color-scheme:dark]"
             />
             {dateFilter && (
               <button

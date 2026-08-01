@@ -10,10 +10,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "randomuser.me",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com", // 👈 Added Unsplash hostname here
+      },
     ],
   },
   experimental: {
-    serverActions: { // 👈 Changed from serverAction (singular) to serverActions (plural)
+    serverActions: {
       bodySizeLimit: "5mb",
     },
   },

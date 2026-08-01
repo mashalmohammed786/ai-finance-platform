@@ -65,6 +65,63 @@ export async function createTransaction(data) {
   }
 }
 
+export async function deleteTransaction(id) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // Fetch the transaction to ensure ownership and get amount details for account balance reversal
+    const transaction = await db.transaction.findUnique({
+      where: {
+        id,
+        userId: user.id,
+      },
+    });
+
+    if (!transaction) throw new Error("Transaction not found");
+
+    const account = await db.account.findUnique({
+      where: { id: transaction.accountId },
+    });
+
+    if (!account) throw new Error("Account not found");
+
+    // Reverse the balance change: if it was an expense, add it back. If income, subtract it.
+    const balanceChange =
+      transaction.type === "EXPENSE"
+        ? Number(transaction.amount)
+        : -Number(transaction.amount);
+
+    const newBalance = Number(account.balance) + balanceChange;
+
+    await db.$transaction(async (tx) => {
+      // Delete the transaction
+      await tx.transaction.delete({
+        where: { id },
+      });
+
+      // Update the associated account balance
+      await tx.account.update({
+        where: { id: transaction.accountId },
+        data: { balance: newBalance },
+      });
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath(`/account/${transaction.accountId}`);
+
+    return { success: true };
+  } catch (error) {
+    throw new Error(error.message || "Failed to delete transaction");
+  }
+}
+
 export async function scanReceipt(fileOrFormData) {
   try {
     let file;

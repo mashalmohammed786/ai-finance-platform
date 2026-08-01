@@ -44,6 +44,14 @@ export function AccountCard({ account }) {
     }
   }, [error]);
 
+  // Helper to format account balances in Indian Rupees (INR)
+  const formatINR = (val) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    }).format(val || 0);
+
   return (
     <Card className="bg-card hover:bg-accent/50 border-border hover:border-blue-500/40 shadow-xl rounded-2xl transition-all duration-300 relative overflow-hidden group">
       <Link href={`/account/${id}`}>
@@ -70,7 +78,7 @@ export function AccountCard({ account }) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-black text-foreground">
-            ${Number(balance || 0).toFixed(2)}
+            {formatINR(balance)}
           </div>
           <p className="text-xs text-muted-foreground capitalize mt-2 flex items-center gap-1.5">
             <span className="px-2 py-0.5 rounded-md bg-muted border border-border text-muted-foreground font-medium">

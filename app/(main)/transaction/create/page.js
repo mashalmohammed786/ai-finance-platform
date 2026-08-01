@@ -19,12 +19,12 @@ import { defaultCategories } from "@/data/categories";
 import useFetch from "@/hooks/use-fetch";
 import { createTransaction, scanReceipt } from "@/actions/transaction";
 import { getUserAccounts } from "@/actions/dashboard";
-import { Loader2, Sparkles, Upload, ArrowLeft } from "lucide-react";
+import { Loader2, Sparkles, Upload, Camera, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export const dynamic = "force-dynamic"; // <--- Add this line to prevent static generation errors
+export const dynamic = "force-dynamic";
 
 const transactionSchema = z.object({
   type: z.enum(["INCOME", "EXPENSE"]),
@@ -41,6 +41,14 @@ export default function AddTransactionPage() {
   const router = useRouter();
   const [accounts, setAccounts] = useState([]);
   const [scanning, setScanning] = useState(false);
+
+  // Helper to format values in Indian Rupees (INR)
+  const formatINR = (val) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    }).format(val || 0);
 
   const {
     register,
@@ -152,7 +160,7 @@ export default function AddTransactionPage() {
         <h1 className="text-3xl font-black text-foreground tracking-tight">Add Transaction</h1>
       </div>
 
-      {/* AI Receipt Scanner Card */}
+      {/* AI Receipt Scanner Card with Camera & Gallery Options */}
       <Card className="bg-card text-card-foreground border-border shadow-xl rounded-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
@@ -162,30 +170,46 @@ export default function AddTransactionPage() {
               Automated AI Receipt Scanner
             </h3>
             <p className="text-xs text-muted-foreground">
-              Upload a receipt photo to automatically extract amount, date, and description.
+              Capture a photo using your camera or upload a file from your gallery.
             </p>
           </div>
 
-          <label className="cursor-pointer inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all shrink-0">
-            {scanning ? (
-              <>
+          <div className="flex items-center gap-3 shrink-0 flex-wrap justify-center">
+            {/* 1. Camera Capture Button */}
+            <label className="cursor-pointer inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all">
+              {scanning ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Scanning...
-              </>
-            ) : (
-              <>
+              ) : (
+                <Camera className="h-4 w-4" />
+              )}
+              <span>Camera</span>
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment" // Forces rear camera on mobile devices
+                className="hidden"
+                onChange={handleReceiptScan}
+                disabled={scanning}
+              />
+            </label>
+
+            {/* 2. Gallery / File Upload Button */}
+            <label className="cursor-pointer inline-flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-sm font-semibold px-4 py-2.5 rounded-xl border border-border transition-all">
+              {scanning ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
                 <Upload className="h-4 w-4" />
-                Scan Receipt
-              </>
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleReceiptScan}
-              disabled={scanning}
-            />
-          </label>
+              )}
+              <span>Gallery / File</span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleReceiptScan}
+                disabled={scanning}
+              />
+            </label>
+          </div>
         </CardContent>
       </Card>
 
@@ -222,7 +246,7 @@ export default function AddTransactionPage() {
               {/* Amount */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Amount ($)
+                  Amount (₹)
                 </label>
                 <Input
                   type="number"
@@ -253,7 +277,7 @@ export default function AddTransactionPage() {
                   <SelectContent className="bg-popover border-border text-popover-foreground">
                     {accounts.map((acc) => (
                       <SelectItem key={acc.id} value={acc.id}>
-                        {acc.name} (${Number(acc.balance).toFixed(2)})
+                        {acc.name} ({formatINR(acc.balance)})
                       </SelectItem>
                     ))}
                   </SelectContent>

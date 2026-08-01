@@ -8,7 +8,7 @@ import { AccountCard } from "./_components/account-card";
 import { BudgetProgress } from "./_components/budget-progress";
 import { DashboardOverview } from "./_components/transaction-overview";
 
-export const dynamic = "force-dynamic"; // <--- Add this line here
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   // Fetch user accounts and dashboard transactions in parallel
@@ -29,6 +29,12 @@ export default async function DashboardPage() {
     (sum, account) => sum + Number(account.balance || 0),
     0
   );
+
+  // Format total balance to Indian Rupees (INR)
+  const formattedNetWorth = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(totalBalance || 0);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 pt-28 pb-16">
@@ -53,7 +59,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-black text-foreground">
-              ${totalBalance?.toFixed(2) || "0.00"}
+              {formattedNetWorth}
             </div>
             <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
               <Landmark className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
@@ -89,14 +95,14 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Add New Bank Account Card */}
+        {/* Add New Account Card */}
         <Card className="bg-card/50 hover:bg-accent/50 border-border hover:border-primary/50 transition-all shadow-xl rounded-2xl flex items-center justify-center p-6 border-dashed group">
           <CreateAccountDrawer>
             <button className="flex flex-col items-center gap-3 text-muted-foreground hover:text-foreground font-semibold text-sm transition-colors">
               <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-500/20 group-hover:scale-110 transition-transform">
                 <Plus className="h-6 w-6" />
               </div>
-              <span>Add New Bank Account</span>
+              <span>Add New Account</span>
             </button>
           </CreateAccountDrawer>
         </Card>

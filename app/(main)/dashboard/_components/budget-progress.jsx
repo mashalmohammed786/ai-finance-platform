@@ -50,6 +50,14 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
       ? Math.min(Math.round((currentExpenses / budgetAmount) * 100), 100)
       : 0;
 
+  // Helper to format values in Indian Rupees (INR)
+  const formatINR = (val) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    }).format(val || 0);
+
   return (
     <Card className="bg-card text-card-foreground border-border shadow-xl rounded-2xl relative overflow-hidden">
       {/* Ambient Blue Background Glow */}
@@ -91,9 +99,9 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
             ) : (
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-                  ${currentExpenses.toFixed(2)}{" "}
+                  {formatINR(currentExpenses)}{" "}
                   <span className="text-muted-foreground text-lg font-medium">
-                    / ${budgetAmount.toFixed(2)}
+                    / {formatINR(budgetAmount)}
                   </span>
                 </p>
                 <Button

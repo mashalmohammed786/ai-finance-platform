@@ -129,9 +129,10 @@ export function DashboardOverview({ accounts = [], transactions = [] }) {
                 <YAxis
                   stroke="hsl(var(--muted-foreground))"
                   tick={{ fill: "hsl(var(--muted-foreground))" }}
+                  tickFormatter={(value) => `₹${value}`}
                 />
                 <Tooltip
-                  formatter={(value) => `$${Number(value).toFixed(2)}`}
+                  formatter={(value) => `₹${Number(value).toFixed(2)}`}
                   contentStyle={{
                     backgroundColor: "hsl(var(--popover))",
                     borderColor: "hsl(var(--border))",
@@ -183,7 +184,7 @@ export function DashboardOverview({ accounts = [], transactions = [] }) {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value) => `$${Number(value).toFixed(2)}`}
+                    formatter={(value) => `₹${Number(value).toFixed(2)}`}
                     contentStyle={{
                       backgroundColor: "hsl(var(--popover))",
                       borderColor: "hsl(var(--border))",

@@ -14,6 +14,14 @@ import {
 import { format } from "date-fns";
 
 export function AccountChart({ transactions = [] }) {
+  // Helper to format values in Indian Rupees (INR)
+  const formatINR = (val) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    }).format(val || 0);
+
   // Sort oldest to newest for chronological balance history
   const sortedTransactions = [...transactions].sort(
     (a, b) => new Date(a.date) - new Date(b.date)
@@ -65,9 +73,10 @@ export function AccountChart({ transactions = [] }) {
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
+                  tickFormatter={(value) => `₹${value}`}
                 />
                 <Tooltip
-                  formatter={(value) => [`$${Number(value).toFixed(2)}`, "Balance"]}
+                  formatter={(value) => [formatINR(value), "Balance"]}
                   contentStyle={{
                     backgroundColor: "hsl(var(--popover))",
                     borderColor: "hsl(var(--border))",

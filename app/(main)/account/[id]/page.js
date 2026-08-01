@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { getAccountWithTransactions } from "@/actions/account";
+import { deleteTransaction } from "@/actions/transaction"; // 1. Import your server action directly
 import { notFound } from "next/navigation";
 import { CreditCard, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -15,6 +16,25 @@ export default async function AccountPage({ params }) {
   }
 
   const { transactions, ...account } = accountData;
+
+  // Helper to format values in Indian Rupees (INR)
+  const formatINR = (val) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    }).format(val || 0);
+
+  // Define clean Server Action wrappers using the imported function
+  async function handleDeleteSingle(transactionId) {
+    "use server";
+    return await deleteTransaction(transactionId);
+  }
+
+  async function handleDeleteBulk(selectedIds) {
+    "use server";
+    await Promise.all(selectedIds.map((id) => deleteTransaction(id)));
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 pt-28 pb-16">
@@ -42,7 +62,7 @@ export default async function AccountPage({ params }) {
             Current Balance
           </span>
           <p className="text-3xl font-extrabold text-foreground">
-            ${account.balance.toFixed(2)}
+            {formatINR(account.balance)}
           </p>
         </div>
       </div>
@@ -52,9 +72,14 @@ export default async function AccountPage({ params }) {
         <AccountChart transactions={transactions} />
       </Suspense>
 
-      {/* 2. Interactive Transaction Table (Filters, Sort, Bulk Delete) */}
+      {/* 2. Interactive Transaction Table */}
       <Suspense fallback={<div>Loading transactions...</div>}>
-        <TransactionTable transactions={transactions} accountId={account.id} />
+        <TransactionTable
+          transactions={transactions}
+          accountId={account.id}
+          onDeleteTransaction={handleDeleteSingle}
+          onDeleteSelected={handleDeleteBulk}
+        />
       </Suspense>
     </div>
   );

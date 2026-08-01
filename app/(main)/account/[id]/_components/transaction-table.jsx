@@ -37,6 +37,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useFetch from "@/hooks/use-fetch"; // Make sure path matches your project structure
+import { toast } from "sonner"; // Optional: for success/error toasts if you use them
 
 export function TransactionTable({
   transactions = [],
@@ -53,6 +55,30 @@ export function TransactionTable({
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "date", direction: "desc" });
 
+  // Track which specific ID is currently being deleted via useFetch
+  const [deletingId, setDeletingId] = useState(null);
+
+  // Hook for single deletion
+  const {
+    loading: deleteLoading,
+    fn: deleteFn,
+    error: deleteError,
+  } = useFetch(onDeleteTransaction);
+
+  // Hook for bulk deletion
+  const {
+    loading: bulkDeleteLoading,
+    fn: bulkDeleteFn,
+  } = useFetch(onDeleteSelected);
+
+  // Helper to format values in Indian Rupees (INR)
+  const formatINR = (val) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    }).format(val || 0);
+
   // Handle Sort Toggle
   const handleSort = (key) => {
     setSortConfig((prev) => ({
@@ -65,14 +91,12 @@ export function TransactionTable({
   const filteredAndSortedTransactions = useMemo(() => {
     return transactions
       .filter((t) => {
-        // Search Filter (Description, Category, or Formatted Date)
         const formattedDate = format(new Date(t.date), "MMM dd, yyyy").toLowerCase();
         const matchesSearch =
           t.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           t.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           formattedDate.includes(searchTerm.toLowerCase());
 
-        // Specific Date Picker Filter
         let matchesDate = true;
         if (dateFilter) {
           const selectedDate = new Date(dateFilter);
@@ -80,17 +104,14 @@ export function TransactionTable({
           matchesDate = isSameDay(txDate, selectedDate);
         }
 
-        // Type Filter (INCOME / EXPENSE)
         const matchesType =
           typeFilter === "ALL" || t.type?.toUpperCase() === typeFilter;
 
-        // Recurring Filter
         const matchesRecurring =
           recurringFilter === "ALL" ||
           (recurringFilter === "RECURRING" && t.isRecurring) ||
           (recurringFilter === "NON_RECURRING" && !t.isRecurring);
 
-        // Scope Filter (PERSONAL / WORKING)
         const matchesScope =
           scopeFilter === "ALL" ||
           (t.scope && t.scope.toUpperCase() === scopeFilter) ||
@@ -135,7 +156,6 @@ export function TransactionTable({
     sortConfig,
   ]);
 
-  // Bulk Selection Handlers
   const handleSelectAll = (checked) => {
     if (checked) {
       setSelectedIds(filteredAndSortedTransactions.map((t) => t.id));
@@ -152,10 +172,29 @@ export function TransactionTable({
     }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (onDeleteSelected && selectedIds.length > 0) {
-      onDeleteSelected(selectedIds);
-      setSelectedIds([]);
+      try {
+        await bulkDeleteFn(selectedIds);
+        setSelectedIds([]);
+        router.refresh();
+      } catch (error) {
+        console.error("Bulk delete error:", error);
+      }
+    }
+  };
+
+  const handleDeleteSingle = async (id) => {
+    if (onDeleteTransaction) {
+      try {
+        setDeletingId(id);
+        await deleteFn(id);
+        router.refresh(); // Refreshes server data cleanly after deletion completes
+      } catch (error) {
+        console.error("Single delete error:", error);
+      } finally {
+        setDeletingId(null);
+      }
     }
   };
 
@@ -172,7 +211,6 @@ export function TransactionTable({
       {/* Search and Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
         <div className="flex flex-wrap items-center gap-2 flex-1">
-          {/* Text Search Bar */}
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
@@ -184,18 +222,17 @@ export function TransactionTable({
             />
           </div>
 
-          {/* Dedicated Date Picker Input */}
           <div className="relative flex items-center">
             <input
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="py-1.5 px-2.5 border border-border bg-background text-foreground rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-primary dark:[color-scheme:dark]"
+              className="py-2 px-3 text-sm border border-border bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:[color-scheme:dark]"
             />
             {dateFilter && (
               <button
                 onClick={() => setDateFilter("")}
-                className="ml-1 p-1 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 p-1 text-muted-foreground hover:text-foreground"
                 title="Clear date filter"
               >
                 <X className="h-3.5 w-3.5" />
@@ -205,7 +242,6 @@ export function TransactionTable({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Type Filter */}
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-[120px] text-xs border-border bg-background text-foreground">
               <SelectValue placeholder="All Types" />
@@ -217,7 +253,6 @@ export function TransactionTable({
             </SelectContent>
           </Select>
 
-          {/* Recurring Filter */}
           <Select value={recurringFilter} onValueChange={setRecurringFilter}>
             <SelectTrigger className="w-[140px] text-xs border-border bg-background text-foreground">
               <SelectValue placeholder="All Frequencies" />
@@ -229,7 +264,6 @@ export function TransactionTable({
             </SelectContent>
           </Select>
 
-          {/* Personal / Working Filter */}
           <Select value={scopeFilter} onValueChange={setScopeFilter}>
             <SelectTrigger className="w-[140px] text-xs border-border bg-background text-foreground">
               <SelectValue placeholder="All Scopes" />
@@ -241,16 +275,16 @@ export function TransactionTable({
             </SelectContent>
           </Select>
 
-          {/* Bulk Delete Button */}
           {selectedIds.length > 0 && (
             <Button
               variant="destructive"
               size="sm"
+              disabled={bulkDeleteLoading}
               onClick={handleBulkDelete}
               className="flex items-center gap-1.5"
             >
-              <Trash2 className="h-4 w-4" />
-              Delete ({selectedIds.length})
+              <Trash2 className={`h-4 w-4 ${bulkDeleteLoading ? "animate-spin" : ""}`} />
+              {bulkDeleteLoading ? "Deleting..." : `Delete (${selectedIds.length})`}
             </Button>
           )}
         </div>
@@ -326,14 +360,19 @@ export function TransactionTable({
             ) : (
               filteredAndSortedTransactions.map((transaction) => {
                 const isSelected = selectedIds.includes(transaction.id);
+                const isDeletingThis = deletingId === transaction.id && deleteLoading;
+
                 return (
                   <TableRow
                     key={transaction.id}
-                    className={`border-b border-border ${isSelected ? "bg-muted/50" : ""}`}
+                    className={`border-b border-border transition-opacity ${
+                      isSelected ? "bg-muted/50" : ""
+                    } ${isDeletingThis ? "opacity-50 pointer-events-none" : ""}`}
                   >
                     <TableCell>
                       <Checkbox
                         checked={isSelected}
+                        disabled={isDeletingThis}
                         onCheckedChange={(checked) =>
                           handleSelectRow(transaction.id, checked)
                         }
@@ -371,12 +410,16 @@ export function TransactionTable({
                       }`}
                     >
                       {transaction.type === "EXPENSE" ? "-" : "+"}
-                      ${Number(transaction.amount).toFixed(2)}
+                      {formatINR(transaction.amount)}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground">
+                          <Button
+                            variant="ghost"
+                            disabled={isDeletingThis}
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -387,11 +430,19 @@ export function TransactionTable({
                           </DropdownMenuItem>
                           {onDeleteTransaction && (
                             <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
-                              onClick={() => onDeleteTransaction(transaction.id)}
+                              className="text-destructive focus:text-destructive cursor-pointer"
+                              disabled={isDeletingThis}
+                              onSelect={(e) => {
+                                e.preventDefault();
+                                handleDeleteSingle(transaction.id);
+                              }}
                             >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
+                              <Trash2
+                                className={`mr-2 h-4 w-4 ${
+                                  isDeletingThis ? "animate-spin" : ""
+                                }`}
+                              />
+                              {isDeletingThis ? "Deleting..." : "Delete"}
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>

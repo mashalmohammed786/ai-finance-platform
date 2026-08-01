@@ -27,6 +27,61 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Futuristic Earth Poster Section */}
+      <section className="py-16 max-w-7xl mx-auto px-4">
+        <div className="text-center mb-10">
+          <span className="text-xs uppercase tracking-widest font-bold text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+            Global Scale Intelligence
+          </span>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mt-3 mb-2">
+            Global Financial Awareness
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto text-sm">
+            Monitor and manage your financial assets securely from anywhere across the globe.
+          </p>
+        </div>
+
+        <div className="max-w-5xl mx-auto">
+          <div className="relative rounded-2xl overflow-hidden border border-border shadow-2xl bg-card aspect-video group">
+            <Image
+              src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop"
+              alt="Futuristic Earth from Space"
+              fill
+              priority
+              className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent pointer-events-none" />
+          </div>
+        </div>
+      </section>
+
+      {/* Dashboard Analytics Preview Section */}
+      <section className="pb-16 max-w-7xl mx-auto px-4">
+        <div className="text-center mb-10">
+          <span className="text-xs uppercase tracking-widest font-bold text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+            Real-Time Insights
+          </span>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mt-3 mb-2">
+            Clarity in Every Transaction
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto text-sm">
+            Get a comprehensive visual breakdown of your income, expenses, and savings goals at a glance.
+          </p>
+        </div>
+
+        <div className="max-w-5xl mx-auto">
+          <div className="relative rounded-2xl overflow-hidden border border-border shadow-2xl bg-card aspect-video group">
+            <Image
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1920&auto=format&fit=crop"
+              alt="Dashboard Analytics Preview"
+              fill
+              className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent pointer-events-none" />
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="py-24 max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">

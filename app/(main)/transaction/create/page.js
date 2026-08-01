@@ -322,7 +322,7 @@ export default function AddTransactionPage() {
                 <Input
                   type="date"
                   {...register("date")}
-                  className="bg-background border-border text-foreground focus:border-primary focus:ring-primary/20 rounded-xl h-11 dark:[color-scheme:dark]"
+                  className="bg-background border-border text-foreground focus:border-primary focus:ring-primary/20 rounded-xl h-11 [color-scheme:light] dark:[color-scheme:dark]"
                 />
               </div>
 

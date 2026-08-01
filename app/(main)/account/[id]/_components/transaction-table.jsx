@@ -37,8 +37,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useFetch from "@/hooks/use-fetch"; // Make sure path matches your project structure
-import { toast } from "sonner"; // Optional: for success/error toasts if you use them
+import useFetch from "@/hooks/use-fetch";
+import { toast } from "sonner";
 
 export function TransactionTable({
   transactions = [],
@@ -189,7 +189,7 @@ export function TransactionTable({
       try {
         setDeletingId(id);
         await deleteFn(id);
-        router.refresh(); // Refreshes server data cleanly after deletion completes
+        router.refresh();
       } catch (error) {
         console.error("Single delete error:", error);
       } finally {
@@ -227,7 +227,7 @@ export function TransactionTable({
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="py-2 px-3 text-sm border border-border bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:[color-scheme:dark]"
+              className="h-10 py-2 px-3 text-sm border border-border bg-background text-foreground placeholder:text-muted-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:light] dark:[color-scheme:dark]"
             />
             {dateFilter && (
               <button

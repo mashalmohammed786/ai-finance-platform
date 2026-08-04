@@ -4,6 +4,7 @@ import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { revalidatePath } from "next/cache";
+import { checkBudget } from "@/actions/budget"; // Imported the checkBudget function
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -56,10 +57,19 @@ export async function createTransaction(data) {
       return newTransaction;
     });
 
+    // Check if the budget has been exceeded for this account/user
+    const budgetCheck = await checkBudget(data.accountId);
+
     revalidatePath("/dashboard");
     revalidatePath(`/account/${data.accountId}`);
 
-    return { success: true, data: serializeAmount(transaction) };
+    return {
+      success: true,
+      data: serializeAmount(transaction),
+      exceededBudget: budgetCheck?.exceeded || false,
+      budgetAmount: budgetCheck?.budgetAmount,
+      currentExpenses: budgetCheck?.currentExpenses,
+    };
   } catch (error) {
     throw new Error(error.message);
   }

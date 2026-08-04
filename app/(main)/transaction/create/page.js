@@ -90,9 +90,19 @@ export default function AddTransactionPage() {
     loadAccounts();
   }, [setValue]);
 
+  // Updated to handle budget exceeded notification alerts
   useEffect(() => {
     if (transactionResult?.success) {
-      toast.success("Transaction recorded successfully!");
+      if (transactionResult.exceededBudget) {
+        toast.warning(
+          `Budget Alert! You have exceeded your budget. Spent: ${formatINR(
+            transactionResult.currentExpenses
+          )} / Limit: ${formatINR(transactionResult.budgetAmount)}`,
+          { duration: 6000 }
+        );
+      } else {
+        toast.success("Transaction recorded successfully!");
+      }
       router.push("/dashboard");
     }
   }, [transactionResult, router]);
